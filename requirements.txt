@@ -4,5 +4,7 @@ streamlit
 numpy
 Pillow
 flask
-keras~=2.6.0
-tensorflow~=2.6.0
+keras
+tensorflow
+opencv-python
+matplotlib

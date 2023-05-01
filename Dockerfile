@@ -17,5 +17,8 @@ RUN apt-get update
 RUN apt-get install -y libglib2.0-0
 
 EXPOSE 8501
+<<<<<<< HEAD
 CMD ["streamlit", "run", "Fruits_Vegetable_Classification.py"]
+=======
+>>>>>>> 13d3eb2 (Implementacion Docker)
 
