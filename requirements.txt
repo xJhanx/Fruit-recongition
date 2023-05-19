@@ -8,3 +8,5 @@ keras
 tensorflow
 opencv-python
 matplotlib
+pygame
+gTTS

@@ -4,16 +4,47 @@ from PIL import Image
 import numpy as np
 import time 
 import matplotlib.pyplot as plt
-
+from gtts import gTTS
+from IPython.display import Audio
+import tempfile
+import pygame
+import io
 import altair as alt
 import pandas as pd
 from PIL import Image
-
+import os
+import uuid
 
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
 from keras.models import load_model
 import requests
 from bs4 import BeautifulSoup
+
+
+engine = pyttsx3.init()
+
+def text_to_speech(text):
+    if text in audio_cache:
+        return audio_cache[text]
+    print("Ejecutado")
+
+
+    tts = gTTS(text)
+    fp = BytesIO()
+    tts.save(fp)
+    audio_data = fp.getvalue()
+    audio_cache[text] = audio_data
+    return audio_data
+
+# Función para obtener el enlace de descarga del audio
+def get_audio_download_link(audio_data, text):
+    b64_audio = base64.b64encode(audio_data).decode()
+    href = f'<a href="data:audio/mpeg;base64,{b64_audio}" download="{text}.mp3">Descargar audio</a>'
+    
+    print(f"Ejecutados {href}")
+
+    return href
+
 
 #Eliminacion de spinner 
 def eliminarContainer():
@@ -172,10 +203,10 @@ with st.sidebar:
     # Mostrar la imagen en Streamlit
     st.image(img, width=300, caption="Logo")
 
-    st.info('**Category : Vegetables**'+objeto)
-    st.info('**Category : Fruit**')
-    st.success("**Predicted : "  + '*Es una fruta *')
-    st.success("**Predicted : "  + '*Es un vegetal*')
+    # st.info('**Category : Vegetables**'+objeto)
+    # st.info('**Category : Fruit**')
+    st.markdown('<p style="display: flex;margin-top:2rem;align-items: center;justify-content: center;">Colores Imagen</p>', unsafe_allow_html=True)
+    # st.success("**Predicted : "  + '*Es un vegetal*')
     # Generar datos de ejemplo
     # x = np.linspace(0, 10, 100)
     # y = np.sin(x)
@@ -229,15 +260,6 @@ def processed_img(img_path):
     print(res)
     return res.capitalize()
 
-
-
-
-
-
-
-
-
-
 img_file_buffer = st.camera_input("Capturar Objeto")
 if img_file_buffer is not None:
     # To read image file buffer with OpenCV:
@@ -246,7 +268,6 @@ if img_file_buffer is not None:
     
     # Save the image to disk
     img_file = cv2.imwrite("nombre_de_la_imagen.jpg", cv2_img)
-    
     objeto = "tome una foto , actualizate"
     # Check the type of cv2_img:
     # Should output: <class 'numpy.ndarray'>
@@ -257,7 +278,7 @@ if img_file_buffer is not None:
     st.write(cv2_img.shape)
 
     st.title("Frutas🍍-Vegetables🍅 ")
-
+    textoahablar=""
     if img_file_buffer is not None:
         save_image_path = './nombre_de_la_imagen.jpg'
         with open(save_image_path, "wb") as f:
@@ -267,12 +288,42 @@ if img_file_buffer is not None:
         if img_file_buffer is not None:
             result = processed_img(save_image_path)
             print(result)
-            array = {'Banana':'Banano'}
-            if result in vegetables:
-                st.info('**Category : Vegetables**')
-            else:
-                st.info('**Category : Fruit**')
-            st.success("**Predicted : " + array[result] + '**')
-            cal = fetch_calories(result)
-            if cal:
-                st.warning('**' + cal + '(100 grams)**')
+            dictionary = {'Apple': 'Manzana', 'Banana': 'Banana', 'Bell Pepper': 'Pimiento Morrón', 'Chilli Pepper': 'Ají picante', 'Grapes': 'Uvas', 'Jalapeno': 'Jalapeño', 'Kiwi': 'Kiwi', 'Lemon': 'Limón', 'Mango': 'Mango', 'Orange': 'Naranja', 'Paprika': 'Pimentón', 'Pear': 'Pera', 'Pineapple': 'Piña', 'Pomegranate': 'Granada', 'Watermelon': 'Sandía'}
+            try:
+                if result in vegetables:
+                    st.info('**Category : Vegetables**')
+                else:
+                    st.info('**Categoría: Frutas**')
+                st.success("**Predicción: " + result  + '**')
+                cal = fetch_calories(result)
+                # audio_data = text_to_speech(text)
+                # st.audio(audio_data, format='audio/mpeg')
+                # st.markdown(get_audio_download_link(audio_data, text), unsafe_allow_html=True)
+                if cal:
+                    st.warning('**' + cal + '(100 grams)**')
+                print("Fruta "+ result)
+                textoahablar = dictionary[result]
+            except:
+                st.warning('** FRUTA NO ENCONTRADA EN EL MODELO **')
+
+            print("textoahablar: "+ textoahablar)
+            if(textoahablar != ""):
+                tts = gTTS(text=f"La fruta es: {textoahablar}, con una cantidad aproximada de calorias {cal} por cada 100 gramos", lang='es')
+                audio_file_name = f"audio_{uuid.uuid4()}.mp3"
+                audio_file_path = os.path.join(os.path.expanduser('~'), 'Downloads', audio_file_name)
+
+                tts.save(audio_file_path)
+                # Inicializar pygame
+                pygame.mixer.init()
+                pygame.mixer.music.load(audio_file_path)
+
+                # Reproducir el audio automáticamente
+                pygame.mixer.music.play()
+
+                # Interfaz de la aplicación web utilizando Streamlit
+                st.title("Reproductor de audio")
+                st.audio(audio_file_path, format='audio/mp3')
+
+                # Mantener la aplicación en ejecución hasta que finalice la reproducción del audio
+                while pygame.mixer.music.get_busy():
+                    pass
