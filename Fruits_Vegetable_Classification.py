@@ -5,7 +5,6 @@ import numpy as np
 import time 
 import matplotlib.pyplot as plt
 from gtts import gTTS
-from IPython.display import Audio
 import tempfile
 import pygame
 import io
@@ -20,8 +19,6 @@ from keras.models import load_model
 import requests
 from bs4 import BeautifulSoup
 
-
-engine = pyttsx3.init()
 
 def text_to_speech(text):
     if text in audio_cache:
@@ -296,13 +293,14 @@ if img_file_buffer is not None:
                     st.info('**Categoría: Frutas**')
                 st.success("**Predicción: " + result  + '**')
                 cal = fetch_calories(result)
-                # audio_data = text_to_speech(text)
-                # st.audio(audio_data, format='audio/mpeg')
-                # st.markdown(get_audio_download_link(audio_data, text), unsafe_allow_html=True)
+
                 if cal:
                     st.warning('**' + cal + '(100 grams)**')
-                print("Fruta "+ result)
-                textoahablar = dictionary[result]
+                if result not in dictionary:
+                    print("Error: El elemento no existe en el diccionario")
+                else:
+                    textoahablar = dictionary[result]
+
             except:
                 st.warning('** FRUTA NO ENCONTRADA EN EL MODELO **')
 
