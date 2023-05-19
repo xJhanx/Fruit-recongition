@@ -11,7 +11,7 @@ labels = {0: 'apple', 1: 'banana', 2: 'beetroot', 3: 'bell pepper', 4: 'cabbage'
           26: 'pomegranate', 27: 'potato', 28: 'raddish', 29: 'soy beans', 30: 'spinach', 31: 'sweetcorn',
           32: 'sweetpotato', 33: 'tomato', 34: 'turnip', 35: 'watermelon'}
 
-fruits = ['Apple', 'Banana', 'Bello Pepper', 'Chilli Pepper', 'Grapes', 'Jalepeno', 'Kiwi', 'Lemon', 'Mango', 'Orange',
+fruits = ['Apple', 'Banano', 'Bello Pepper', 'Chilli Pepper', 'Grapes', 'Jalepeno', 'Kiwi', 'Lemon', 'Mango', 'Orange',
           'Paprika', 'Pear', 'Pineapple', 'Pomegranate', 'Watermelon']
 vegetables = ['Beetroot', 'Cabbage', 'Capsicum', 'Carrot', 'Cauliflower', 'Corn', 'Cucumber', 'Eggplant', 'Ginger',
               'Lettuce', 'Onion', 'Peas', 'Potato', 'Raddish', 'Soy Beans', 'Spinach', 'Sweetcorn', 'Sweetpotato',
@@ -47,6 +47,7 @@ def run():
             form_data = {'file': open(save_image_path, 'rb')}
             resp = requests.post(url, files=form_data)
             resp_dict = resp.json()
+            print("Respuesta" + resp_dict)
             result = resp_dict['prediction']
             print(result)
             if result in vegetables:

@@ -146,7 +146,7 @@ labels = {0: 'apple', 1: 'banana', 2: 'beetroot', 3: 'bell pepper', 4: 'cabbage'
           26: 'pomegranate', 27: 'potato', 28: 'raddish', 29: 'soy beans', 30: 'spinach', 31: 'sweetcorn',
           32: 'sweetpotato', 33: 'tomato', 34: 'turnip', 35: 'watermelon'}
 
-fruits = ['Apple', 'Banana', 'Bello Pepper', 'Chilli Pepper', 'Grapes', 'Jalepeno', 'Kiwi', 'Lemon', 'Mango', 'Orange',
+fruits = ['Apple', 'Banano', 'Bello Pepper', 'Chilli Pepper', 'Grapes', 'Jalepeno', 'Kiwi', 'Lemon', 'Mango', 'Orange',
           'Paprika', 'Pear', 'Pineapple', 'Pomegranate', 'Watermelon']
 vegetables = ['Beetroot', 'Cabbage', 'Capsicum', 'Carrot', 'Cauliflower', 'Corn', 'Cucumber', 'Eggplant', 'Ginger',
               'Lettuce', 'Onion', 'Peas', 'Potato', 'Raddish', 'Soy Beans', 'Spinach', 'Sweetcorn', 'Sweetpotato',
@@ -250,8 +250,8 @@ if img_file_buffer is not None:
     objeto = "tome una foto , actualizate"
     # Check the type of cv2_img:
     # Should output: <class 'numpy.ndarray'>
-    st.write(type(cv2_img))
-    st.write(objeto)
+    # st.write(type(cv2_img))
+    # st.write(objeto)
     # Check the shape of cv2_img:
     # Should output shape: (height, width, channels)
     st.write(cv2_img.shape)
@@ -267,11 +267,12 @@ if img_file_buffer is not None:
         if img_file_buffer is not None:
             result = processed_img(save_image_path)
             print(result)
+            array = {'Banana':'Banano'}
             if result in vegetables:
                 st.info('**Category : Vegetables**')
             else:
                 st.info('**Category : Fruit**')
-            st.success("**Predicted : " + result + '**')
+            st.success("**Predicted : " + array[result] + '**')
             cal = fetch_calories(result)
             if cal:
                 st.warning('**' + cal + '(100 grams)**')
