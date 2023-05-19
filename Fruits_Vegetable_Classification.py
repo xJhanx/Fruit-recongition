@@ -308,7 +308,7 @@ if img_file_buffer is not None:
             if(textoahablar != ""):
                 tts = gTTS(text=f"La fruta es: {textoahablar}, con una cantidad aproximada de calorias {cal} por cada 100 gramos", lang='es')
                 audio_file_name = f"audio_{uuid.uuid4()}.mp3"
-                audio_file_path = os.path.join(os.path.expanduser('~'), 'Downloads', audio_file_name)
+                audio_file_path = os.path.join('/tmp', audio_file_name)
 
                 tts.save(audio_file_path)
                 # Inicializar pygame
