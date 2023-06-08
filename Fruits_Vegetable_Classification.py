@@ -232,7 +232,7 @@ def fetch_calories(prediction):
         calories = scrap.find("div", class_="BNeawe iBp4i AP7Wnd").text
         return calories
     except Exception as e:
-        st.error("Can't able to fetch the Calories")
+        st.error("No fue posible obtener las calorías")
         print(e)
 
 
@@ -259,7 +259,7 @@ if img_file_buffer is not None:
     st.write(f'Esquema Rgb: {cv2_img.shape}')
 
     # Save the image to disk
-    img_file = cv2.imwrite(f"{unique_name}.jpg", cv2_img)
+    # img_file = cv2.imwrite(f"{unique_name}.jpg", cv2_img)
     objeto = "tome una foto, actualizate"
     # Check the type of cv2_img:
     # Should output: <class 'numpy.ndarray'>
@@ -275,35 +275,30 @@ if img_file_buffer is not None:
     if img_file_buffer is not None:
         save_folder = './imagenes'
         os.makedirs(save_folder, exist_ok=True)
-
-
-
-        # Crear la ruta de archivo con el nombre personalizado
         save_image_path = os.path.join(save_folder, f'{unique_name}.jpg')
-
-        # Guardar la imagen
         with open(save_image_path, "wb") as f:
             f.write(img_file_buffer.getbuffer())
 
         with open(save_image_path, "wb") as f:
             f.write(img_file_buffer.getbuffer())
 
-        # if st.button("Predict"):
         if img_file_buffer is not None:
             result = processed_img(save_image_path)
             print(result)
             dictionary = {'Apple': 'Manzana', 'Banana': 'Banana', 'Bell Pepper': 'Pimiento Morrón', 'Chilli Pepper': 'Ají picante', 'Grapes': 'Uvas', 'Jalapeno': 'Jalapeño', 'Kiwi': 'Kiwi', 'Lemon': 'Limón', 'Mango': 'Mango', 'Orange': 'Naranja', 'Paprika': 'Pimentón', 'Pear': 'Pera', 'Pineapple': 'Piña', 'Pomegranate': 'Granada', 'Watermelon': 'Sandía'}
-            img = Image.open(f"Assets/{dictionary[result]}.jpg")
-            st.image(img, width=300, caption="Fruta",use_column_width=True)
-            
+            try:
+                img = Image.open(f"Assets/{dictionary[result]}.jpg")
+                st.image(img, width=300, caption="Fruta",use_column_width=True)
+            except:
+                st.warning('La imagen no se encuentra dentro de los assets disponibles')
             try:
                 if result in vegetables:
                     st.info('**Category : Vegetales**')
                 else:
                     st.info('**Categoría: Frutas**')
-                st.success("**Predicción: " + result  + '**')
-                cal = fetch_calories(result)
-
+                st.success("**Predicción: " + dictionary[result]  + '**')
+                cal = fetch_calories(dictionary[result])
+                print(f"Calorias: {cal} y es tipo {type(cal)}")
                 if cal:
                     st.warning('**' + cal + '(100 grams)**')
                 if result not in dictionary:
@@ -316,7 +311,10 @@ if img_file_buffer is not None:
 
             if(textoahablar != ""):
                 st.title("Reproductor 🔊")
-                tts = gTTS(text=f"La fruta es: {textoahablar} y cuenta con {cal}", lang='es')
+                if cal is not None:
+                    tts = gTTS(text=f"La fruta es: {textoahablar} y cuenta con {cal}", lang='es')
+                else:
+                    tts = gTTS(text=f"La fruta es: {textoahablar} y no fue posible obtener las calorías", lang='es')
                 # clear = lambda: os.system('cls')
                 # clear()
                 temp_dir = "./Assets"
