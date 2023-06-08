@@ -293,10 +293,7 @@ if img_file_buffer is not None:
             result = processed_img(save_image_path)
             print(result)
             dictionary = {'Apple': 'Manzana', 'Banana': 'Banana', 'Bell Pepper': 'Pimiento Morrón', 'Chilli Pepper': 'Ají picante', 'Grapes': 'Uvas', 'Jalapeno': 'Jalapeño', 'Kiwi': 'Kiwi', 'Lemon': 'Limón', 'Mango': 'Mango', 'Orange': 'Naranja', 'Paprika': 'Pimentón', 'Pear': 'Pera', 'Pineapple': 'Piña', 'Pomegranate': 'Granada', 'Watermelon': 'Sandía'}
-            if dictionary[result] == 'Banana':
-                img = Image.open(f"Assets/{dictionary[result]}.jpg")
-            else:
-                img = Image.open(f"Assets/{dictionary[result]}.png")
+            img = Image.open(f"Assets/{dictionary[result]}.jpg")
             st.image(img, width=300, caption="Fruta",use_column_width=True)
             
             try:
