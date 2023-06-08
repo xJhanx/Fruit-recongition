@@ -6,14 +6,13 @@ import time
 import matplotlib.pyplot as plt
 from gtts import gTTS
 import tempfile
-import pygame
 import io
 import altair as alt
 import pandas as pd
 from PIL import Image
 import os
 import uuid
-
+import base64
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
 from keras.models import load_model
 import requests
@@ -33,14 +32,6 @@ def text_to_speech(text):
     audio_cache[text] = audio_data
     return audio_data
 
-# Función para obtener el enlace de descarga del audio
-def get_audio_download_link(audio_data, text):
-    b64_audio = base64.b64encode(audio_data).decode()
-    href = f'<a href="data:audio/mpeg;base64,{b64_audio}" download="{text}.mp3">Descargar audio</a>'
-    
-    print(f"Ejecutados {href}")
-
-    return href
 
 
 #Eliminacion de spinner 
@@ -192,6 +183,7 @@ st.title("𝔻𝕖𝕥𝕖𝕔𝕥𝕠𝕣 𝕕𝕖 𝕗𝕣𝕦𝕥𝕒𝕤")
 
 #sidebar set()
 with st.sidebar:
+    unique_name = str(uuid.uuid4().int)
 
     # Cargar una imagen desde el disco
     img = Image.open("Assets/logo_unipaz.png")
@@ -231,6 +223,7 @@ with st.sidebar:
 
 
 
+
 def fetch_calories(prediction):
     try:
         url = 'https://www.google.com/search?&q=calories in ' + prediction
@@ -263,21 +256,35 @@ if img_file_buffer is not None:
     bytes_data = img_file_buffer.getvalue()
     cv2_img = cv2.imdecode(np.frombuffer(bytes_data, np.uint8), cv2.IMREAD_COLOR)
     
+    st.write(f'Esquema Rgb: {cv2_img.shape}')
+
     # Save the image to disk
-    img_file = cv2.imwrite("nombre_de_la_imagen.jpg", cv2_img)
-    objeto = "tome una foto , actualizate"
+    img_file = cv2.imwrite(f"{unique_name}.jpg", cv2_img)
+    objeto = "tome una foto, actualizate"
     # Check the type of cv2_img:
     # Should output: <class 'numpy.ndarray'>
     # st.write(type(cv2_img))
     # st.write(objeto)
     # Check the shape of cv2_img:
     # Should output shape: (height, width, channels)
-    st.write(cv2_img.shape)
+    st.title("Frutas🍍- Vegetales🍅 ")
+    
+    
 
-    st.title("Frutas🍍-Vegetables🍅 ")
     textoahablar=""
     if img_file_buffer is not None:
-        save_image_path = './nombre_de_la_imagen.jpg'
+        save_folder = './imagenes'
+        os.makedirs(save_folder, exist_ok=True)
+
+
+
+        # Crear la ruta de archivo con el nombre personalizado
+        save_image_path = os.path.join(save_folder, f'{unique_name}.jpg')
+
+        # Guardar la imagen
+        with open(save_image_path, "wb") as f:
+            f.write(img_file_buffer.getbuffer())
+
         with open(save_image_path, "wb") as f:
             f.write(img_file_buffer.getbuffer())
 
@@ -286,9 +293,15 @@ if img_file_buffer is not None:
             result = processed_img(save_image_path)
             print(result)
             dictionary = {'Apple': 'Manzana', 'Banana': 'Banana', 'Bell Pepper': 'Pimiento Morrón', 'Chilli Pepper': 'Ají picante', 'Grapes': 'Uvas', 'Jalapeno': 'Jalapeño', 'Kiwi': 'Kiwi', 'Lemon': 'Limón', 'Mango': 'Mango', 'Orange': 'Naranja', 'Paprika': 'Pimentón', 'Pear': 'Pera', 'Pineapple': 'Piña', 'Pomegranate': 'Granada', 'Watermelon': 'Sandía'}
+            if dictionary[result] == 'Banana':
+                img = Image.open(f"Assets/{dictionary[result]}.jpg")
+            else:
+                img = Image.open(f"Assets/{dictionary[result]}.png")
+            st.image(img, width=300, caption="Fruta",use_column_width=True)
+            
             try:
                 if result in vegetables:
-                    st.info('**Category : Vegetables**')
+                    st.info('**Category : Vegetales**')
                 else:
                     st.info('**Categoría: Frutas**')
                 st.success("**Predicción: " + result  + '**')
@@ -304,24 +317,30 @@ if img_file_buffer is not None:
             except:
                 st.warning('** FRUTA NO ENCONTRADA EN EL MODELO **')
 
-            print("textoahablar: "+ textoahablar)
             if(textoahablar != ""):
-                tts = gTTS(text=f"La fruta es: {textoahablar}, con una cantidad aproximada de calorias {cal} por cada 100 gramos", lang='es')
-                audio_file_name = f"audio_{uuid.uuid4()}.mp3"
-                audio_file_path = os.path.join('/tmp', audio_file_name)
+                st.title("Reproductor 🔊")
+                tts = gTTS(text=f"La fruta es: {textoahablar} y cuenta con {cal}", lang='es')
+                # clear = lambda: os.system('cls')
+                # clear()
+                temp_dir = "./Assets"
+                os.makedirs(temp_dir, exist_ok=True)
 
-                tts.save(audio_file_path)
-                # Inicializar pygame
-                pygame.mixer.init()
-                pygame.mixer.music.load(audio_file_path)
+                temp_file_path = os.path.join("Assets", "audio.mp3")
+                tts.save(temp_file_path)
 
-                # Reproducir el audio automáticamente
-                pygame.mixer.music.play()
 
-                # Interfaz de la aplicación web utilizando Streamlit
-                st.title("Reproductor de audio")
-                st.audio(audio_file_path, format='audio/mp3')
+                absolute_path = os.path.abspath(temp_file_path)
+                print("Ruta del archivo temporal:", absolute_path)
 
-                # Mantener la aplicación en ejecución hasta que finalice la reproducción del audio
-                while pygame.mixer.music.get_busy():
-                    pass
+                with open(absolute_path, "rb") as f:
+                        data = f.read()
+                        b64 = base64.b64encode(data).decode()
+                        md = f"""
+                            <audio controls autoplay="true">
+                            <source src="data:audio/mp3;base64,{b64}" type="audio/mp3">
+                            </audio>
+                            """
+                        st.markdown(
+                            md,
+                            unsafe_allow_html=True,
+                        )
