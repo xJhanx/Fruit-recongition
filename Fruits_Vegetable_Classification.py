@@ -285,7 +285,7 @@ if img_file_buffer is not None:
         if img_file_buffer is not None:
             result = processed_img(save_image_path)
             print(result)
-            dictionary = {'Apple': 'Manzana', 'Banana': 'Banana', 'Bell Pepper': 'Pimiento Morrón', 'Chilli Pepper': 'Ají picante', 'Grapes': 'Uvas', 'Jalapeno': 'Jalapeño', 'Kiwi': 'Kiwi', 'Lemon': 'Limón', 'Mango': 'Mango', 'Orange': 'Naranja', 'Paprika': 'Pimentón', 'Pear': 'Pera', 'Pineapple': 'Piña', 'Pomegranate': 'Granada', 'Watermelon': 'Sandía'}
+            dictionary = {'Apple': 'Manzana', 'Banana': 'Banana', 'Bell Pepper': 'Pimiento Morrón', 'Chilli Pepper': 'Ají picante', 'Grapes': 'Uvas', 'Jalapeno': 'Jalapeño', 'Kiwi': 'Kiwi', 'Lemon': 'Limón', 'Mango': 'Mango', 'Orange': 'Naranja', 'Paprika': 'Pimentón', 'Pear': 'Pera', 'Pineapple': 'Piña', 'Pomegranate': 'Granada', 'Watermelon': 'Sandía', 'Beetroot': 'Remolacha', 'Cabbage': 'Repollo', 'Capsicum': 'Pimiento', 'Carrot': 'Zanahoria', 'Cauliflower': 'Coliflor', 'Corn': 'Maíz', 'Cucumber': 'Pepino', 'Eggplant': 'Berenjena', 'Ginger': 'Jengibre', 'Lettuce': 'Lechuga', 'Onion': 'Cebolla', 'Peas': 'Guisantes', 'Potato': 'Patata', 'Radish': 'Rábano', 'Soy Beans': 'Habas de soja', 'Spinach': 'Espinaca', 'Sweetcorn': 'Maíz dulce', 'Sweetpotato': 'Batata', 'Tomato': 'Tomate', 'Turnip': 'Nabo' }
             try:
                 img = Image.open(f"Assets/{dictionary[result]}.jpg")
                 st.image(img, width=300, caption="Fruta",use_column_width=True)
